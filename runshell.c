@@ -56,8 +56,8 @@ void run_shell(FILE *input_stream)
 			}
 			else
 			{
-				printf("./hsh: No such file or directory\n");
-				/*exit(status);*/
+				/*printf("./hsh: No such file or directory\n");*/
+				exit(status);
 			}
 		}
 		else if (strcmp(command, "env") == 0)

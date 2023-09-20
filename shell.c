@@ -5,7 +5,7 @@
  * @argv: Argument vector
  * Return: Always 0 on success
  */
-/*int main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	if (argc == 1)
 	{
@@ -30,30 +30,4 @@
 	}
 	run_shell(stdin);
 	return (0);
-}*/
-
-int main(int argc, char *argv[]) {
-    FILE *input_stream = stdin;
-
-    if (argc > 2) {
-        fprintf(stderr, "Usage: %s [filename]\n", argv[0]);
-        return 1;
-    }
-
-    if (argc == 2) {
-        input_stream = fopen(argv[1], "r");
-        if (input_stream == NULL) {
-            perror("fopen");
-            return 1;
-        }
-    }
-
-    run_shell(input_stream);
-
-    if (input_stream != stdin) {
-        fclose(input_stream);
-    }
-
-    return 0;
 }
-

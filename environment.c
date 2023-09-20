@@ -37,9 +37,9 @@ int unset_environment_variable(const char *variable)
  *
  * Return: void
  */
-void print_environment_variables()
+void print_environment_variables(void)
 {
-	extern char **environ;
+	/*extern char **environ;*/
 	char **env;
 
 	for (env = environ; *env != NULL; env++)

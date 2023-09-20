@@ -127,7 +127,7 @@ void run_shell(FILE *input_stream)
 
 			if (strlen(cmd1) > 0 && strlen(cmd2) > 0)
 			{
-				execute_piped_commands(cmd1, cmd2);
+				exec_piped_commands(cmd1, cmd2);
 			}
 			else
 			{

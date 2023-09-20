@@ -24,6 +24,7 @@ void _split(const char *cmd_buffer, char delimiter, char **av, int max_tokens);
 int tokenize_command(char command[], char *args[]);
 /*environment*/
 void print_environment_variables(void);
+extern char **environ;
 int set_environment_variable(const char *variable, const char *value);
 int unset_environment_variable(const char *variable);
 /*cd.c*/
@@ -33,20 +34,14 @@ int get_user_input(char command[], size_t max_length, FILE *input_stream);
 int is_valid_command(char command[]);
 void fork_and_execute_command(char command[], int *last_exit_status);
 void parse_arguments(char input[], char *args[]);
-
-void execute_piped_commands(const char *cmd1, const char *cmd2);
-void execute_commands_in_pipe_and_wait_for_child_processes_to_finish(int *pipefd,
-                                                                     pid_t pid1,
-                                                                     pid_t pid2);
-void fork_child_processes_and_create_pipe(int *pipefd, pid_t *pid1, pid_t *pid2);
-
-
-
-
 /*test2.c*/
 void trim_whitespace(char *str);
 /*void execute_piped_commands(const char *cmd1, const char *cmd2);*/
 /*runshell.c*/
 void run_shell(FILE *input_stream);
+/*fork.c*/
+void fork_pipe(int *pipefd, pid_t *pid1, pid_t *pid2);
+void exec_pipe(int *pipefd, pid_t pid1, pid_t pid2);
+void exec_piped_commands(const char *cmd1, const char *cmd2);
 
 #endif

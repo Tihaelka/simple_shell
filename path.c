@@ -45,3 +45,29 @@ void execute_command(char *command)
 	printf("command not found: %s\n", command);
 	free(path_copy);
 }
+/**
+ * trim_whitespace - Removes leading and trealing whitespaces from a string
+ * @str: the string to be trimmed
+ *
+ * Return: void
+ */
+void trim_whitespace(char *str)
+{
+	char *end;
+
+	while (isspace(*str))
+	{
+		str++;
+	}
+	if (*str == 0)
+	{
+		return;
+	}
+	end = str + strlen(str) - 1;
+	while (end > str && isspace(*end))
+	{
+		end--;
+	}
+	end[1] = '\0';
+}
+

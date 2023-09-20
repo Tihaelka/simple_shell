@@ -23,11 +23,11 @@ int main(int argc, char *argv[]);
 void _split(const char *cmd_buffer, char delimiter, char **av, int max_tokens);
 int tokenize_command(char command[], char *args[]);
 /*environment*/
-void print_environment_variables();
+void print_environment_variables(void);
 int set_environment_variable(const char *variable, const char *value);
 int unset_environment_variable(const char *variable);
 /*cd.c*/
-void update_pwd_variable();
+void update_pwd_variable(void);
 /*test.c*/
 int get_user_input(char command[], size_t max_length, FILE *input_stream);
 int is_valid_command(char command[]);

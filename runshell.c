@@ -56,7 +56,7 @@ void run_shell(FILE *input_stream)
 			}
 			else
 			{
-				/*printf("./hsh: No such file or directory\n");*/
+				/*printf("./shell: No such file or directory\n");*/
 				exit(status);
 			}
 		}
@@ -131,7 +131,7 @@ void run_shell(FILE *input_stream)
 			}
 			else
 			{
-				printf("./hsh: Invalid piped command\n");
+				printf("./shell: Invalid piped command\n");
 			}
 		}
 		else if (is_valid_command(command))
@@ -140,7 +140,7 @@ void run_shell(FILE *input_stream)
 		}
 		else
 		{
-			printf("./hsh: No such file or directory\n");
+			printf("./shell: No such file or directory\n");
 		}
 	}
 

@@ -1,12 +1,12 @@
 Creating a simple shell project in C programming involves several steps.
-A shell is a command-line interface that allows users to interact with 
-an operating system. 
+A shell is a command-line interface that allows users to interact with
+an operating system.
 In order to meet the main requirments of the project
 Here's the outline of the steps i have followed to
 create a simple shell in C:
 
 2. **Designing Shell**:
-   - Decide on the features and functionalities i want to include in 
+   - Decide on the features and functionalities i want to include in
    shell according to the tasks requirments.
 3. **Write the Main Loop**:
    - Create a main loop that continuously reads user input and processes

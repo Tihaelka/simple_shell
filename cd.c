@@ -4,7 +4,7 @@
  *
  * Retrn: void
  */
-void update_pwd_variable()
+void update_pwd_variable(void)
 {
 	char cwd[MAX_PATH_LENGTH];
 

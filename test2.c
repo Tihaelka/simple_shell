@@ -9,7 +9,7 @@ void trim_whitespace(char *str)
 {
 	char *end;
 
-	while(isspace(*str))
+	while (isspace(*str))
 	{
 		str++;
 	}
@@ -17,7 +17,7 @@ void trim_whitespace(char *str)
 	{
 		return;
 	}
-	end = str + strlen(str) -1;
+	end = str + strlen(str) - 1;
 	while (end > str && isspace(*end))
 	{
 		end--;

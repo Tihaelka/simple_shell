@@ -30,7 +30,7 @@ void trim_whitespace(char *str)
  * @cmd2: the second one
  *
  * Return: void
- */
+ *
 void execute_piped_commands(const char *cmd1, const char *cmd2)
 {
 	int pipefd[2];
@@ -84,4 +84,4 @@ void execute_piped_commands(const char *cmd1, const char *cmd2)
 		waitpid(pid2, NULL, 0);
 	}
 	}
-}
+}*/

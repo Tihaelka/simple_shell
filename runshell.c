@@ -1,11 +1,10 @@
 #include "shell.h"
 /**
- * run_shell -  run a simple shell processing command from a given input stream
- * @input_stream: a pointer to input stream to read commands from
- *
- * Return: no return value
- */
-
+	* run_shell - run a simple shell processing command from a given input stream
+	* @input_stream: a pointer to input stream to read commands from
+	*
+	* Return: no return value
+	*/
 void run_shell(FILE *input_stream)
 {
 	char command[MAX_CMD_LENGTH];
@@ -23,7 +22,6 @@ void run_shell(FILE *input_stream)
 		{
 			printf("$ ");
 		}
-
 		if (input_stream == stdin)
 		{
 			if (!get_user_input(command, MAX_CMD_LENGTH, input_stream))
@@ -37,10 +35,9 @@ void run_shell(FILE *input_stream)
 			{
 				break;
 			}
-
 			len = strlen(command);
 
-			if (len > 0 && command[len - 1] == '\n')
+			if  (len > 0 && command[len - 1] == '\n')
 			{
 				command[len - 1] = '\0';
 			}
@@ -72,30 +69,33 @@ void run_shell(FILE *input_stream)
 		}
 		else if (strncmp(command, "setenv", 6) == 0)
 		{
-			char variable[MAX_CMD_LENGTH];
+			char variabl[MAX_CMD_LENGTH];
 			char value[MAX_CMD_LENGTH];
 
-			if (sscanf(command, "setenv %s %s", variable, value) == 2)
+			if (sscanf(command, "setenv %s %s", variabl, value) == 2)
 			{
-				set_environment_variable(variable, value);
+				set_environment_variable(variabl, value);
 			}
 			else
 			{
 				fprintf(stderr, "Usage: setenv VARIABLE VALUE\n");
 			}
+
 		}
 		else if (strncmp(command, "unsetenv", 8) == 0)
 		{
-			char variable[MAX_CMD_LENGTH];
+			char variabl[MAX_CMD_LENGTH];
 
-			if (sscanf(command, "unsetenv %s", variable) == 1)
+
+			if (sscanf(command, "unsetenv %s", variabl) == 1)
 			{
-				unset_environment_variable(variable);
+				unset_environment_variable(variabl);
 			}
 			else
 			{
 				fprintf(stderr, "Usage: unsetenv VARIABLE\n");
 			}
+
 		}
 		else if (strncmp(command, "echo $?", 7) == 0)
 		{
@@ -105,7 +105,7 @@ void run_shell(FILE *input_stream)
 		{
 			printf("%d\n", shell_pid);
 		}
-		else if (strncmp(command, "echo $PATH", 10) == 0)
+		else if (strncmp(command, "echo $PATH,", 10) == 0)
 		{
 			char *path_value = getenv("PATH");
 
@@ -144,7 +144,6 @@ void run_shell(FILE *input_stream)
 			printf("./shell: No such file or directory\n");
 		}
 	}
-
 	if (!interactive && input_stream != stdin)
 	{
 		fclose(input_stream);

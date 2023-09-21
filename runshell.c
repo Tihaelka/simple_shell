@@ -1,20 +1,20 @@
-#include "shell.h"
+#include "main.h"
 /**
-	* run_shell - run a simple shell processing command from a given input stream
-	* @input_stream: a pointer to input stream to read commands from
-	*
-	* Return: no return value
-	*/
-void run_shell(FILE *input_stream)
+ * main - Entry point
+ * Return: no return
+ */
+int main(void)
 {
-	char command[MAX_CMD_LENGTH];
-	int interactive;
-	size_t len;
-	int status;
-	int last_exit_status = 0;
-	pid_t shell_pid = getpid();
-
-	interactive = isatty(STDIN_FILENO);
+	char *usr_int = NULL;
+	int interactive = isatty(STDIN_FILENO);
+	ssize_t rd;
+	size_t int_size;
+	char *cmd;
+	pid_t child_pid;
+	int last_sts, do_print, do_exec;
+	char *cmd_cp;
+	char *last_tok;
+	char *var;
 
 	while (1)
 	{
@@ -22,130 +22,114 @@ void run_shell(FILE *input_stream)
 		{
 			printf("$ ");
 		}
-		if (input_stream == stdin)
-		{
-			if (!get_user_input(command, MAX_CMD_LENGTH, input_stream))
-			{
-				break;
-			}
-		}
-		else
-		{
-			if (fgets(command, MAX_CMD_LENGTH, input_stream) == NULL)
-			{
-				break;
-			}
-			len = strlen(command);
 
-			if  (len > 0 && command[len - 1] == '\n')
+		int_size = 0;
+		rd = getline(&usr_int, &int_size, stdin);
+
+		if (rd == -1)
+		{
+			if (interactive)
 			{
-				command[len - 1] = '\0';
+				printf("\n");
 			}
-		}
-		if (command[0] == '#')
-		{
-			continue;
-		}
-		if (strncmp(command, "exit", 4) == 0)
-		{
-			if (sscanf(command, "exit %d", &status) == 1)
+			if (feof(stdin))
 			{
-				exit(status);
+				free(usr_int);
+				return (0);
 			}
 			else
 			{
-				/*printf("./shell: No such file or directory\n");*/
-				exit(status);
+				perror("getline");
+				free(usr_int);
+				exit(1);
 			}
 		}
-		else if (strcmp(command, "env") == 0)
-		{
-			print_environment_variables();
-		}
-		else if (strcmp(command, "quit") == 0)
-		{
-			printf("Goodbye!\n");
-			break;
-		}
-		else if (strncmp(command, "setenv", 6) == 0)
-		{
-			char variabl[MAX_CMD_LENGTH];
-			char value[MAX_CMD_LENGTH];
 
-			if (sscanf(command, "setenv %s %s", variabl, value) == 2)
-			{
-				set_environment_variable(variabl, value);
-			}
-			else
-			{
-				fprintf(stderr, "Usage: setenv VARIABLE VALUE\n");
-			}
+		usr_int[strcspn(usr_int, "\n")] = '\0';
+		cmd_cp = strdup(usr_int);
+		last_tok = NULL;
 
-		}
-		else if (strncmp(command, "unsetenv", 8) == 0)
-		{
-			char variabl[MAX_CMD_LENGTH];
+		cmd = strtok_r(cmd_cp, ";", &last_tok);
+		last_sts = 0;
+		do_print = 0;
 
+		while (cmd != NULL)
+		{
+			do_exec = 1;
 
-			if (sscanf(command, "unsetenv %s", variabl) == 1)
+			if (strstr(cmd, "&&"))
 			{
-				unset_environment_variable(variabl);
+				do_exec = (last_sts == 0);
 			}
-			else
+			else if (strstr(cmd, "||"))
 			{
-				fprintf(stderr, "Usage: unsetenv VARIABLE\n");
+				do_exec = (last_sts != 0);
 			}
+			if (do_exec)
+			{
+				var = strstr(cmd, "$");
+				if (var)
+				{
+					char var_name[64];
 
-		}
-		else if (strncmp(command, "echo $?", 7) == 0)
-		{
-			printf("%d\n", last_exit_status);
-		}
-		else if (strncmp(command, "echo $$", 7) == 0)
-		{
-			printf("%d\n", shell_pid);
-		}
-		else if (strncmp(command, "echo $PATH,", 10) == 0)
-		{
-			char *path_value = getenv("PATH");
+					sscanf(var, "$%63s", var_name);
 
-			if (path_value != NULL)
-			{
-				printf("%s\n", path_value);
-			}
-			else
-			{
-				fprintf(stderr, "PATH is not set\n");
-			}
-		}
-		else if (strchr(command, '|') != NULL)
-		{
-			char *cmd1 = strtok(command, "|");
-			char *cmd2 = strtok(NULL, "|");
+					if (strcmp(var_name, "?") == 0)
+					{
+						sprintf(var, "%d", last_sts);
+					}
+					else if (strcmp(var_name, "$") == 0)
+					{
+						sprintf(var, "%d", getpid());
+					}
+				}
 
-			trim_whitespace(cmd1);
-			trim_whitespace(cmd2);
+				child_pid = fork();
 
-			if (strlen(cmd1) > 0 && strlen(cmd2) > 0)
-			{
-				exec_piped_commands(cmd1, cmd2);
+				if (child_pid == -1)
+				{
+					perror("fork");
+					free(usr_int);
+					free(cmd_cp);
+					exit(1);
+				}
+				else if (child_pid == 0)
+				{
+					char *args[4];
+					args[0] = "sh";
+					args[1] = "-c";
+					args[2] = cmd;
+					args[3] = NULL;
+
+					execvp("sh", args);
+					perror("execvp");
+					exit(127);
+				}
+				else
+				{
+					int status;
+					waitpid(child_pid, &status, 0);
+					last_sts = WEXITSTATUS(status);
+					do_print = 1;
+				}
 			}
-			else
-			{
-				printf("./shell: Invalid piped command\n");
-			}
+			cmd = strtok_r(NULL, ";", &last_tok);
 		}
-		else if (is_valid_command(command))
+		if (do_print && interactive && last_sts != 0)
 		{
-			fork_and_execute_command(command, &last_exit_status);
+			printf("last command failed with status%d\n",
+					last_sts);
 		}
-		else
+		if (strcmp(usr_int, "exit") == 0)
 		{
-			printf("./shell: No such file or directory\n");
+			free(usr_int);
+			free(cmd_cp);
+			return (0);
 		}
+		free(usr_int);
+		free(cmd_cp);
+		usr_int = NULL;
+		cmd_cp = NULL;
 	}
-	if (!interactive && input_stream != stdin)
-	{
-		fclose(input_stream);
-	}
+	return (0);
 }

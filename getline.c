@@ -1,51 +1,48 @@
-#include "shell.h"
+#include "main.h"
 /**
- * _getline - Read a line from a file stream.
- * @lineptr: A pointer to buffer that will store the line.
- * @stream: The file stream to read from.
- *
- * Return: The number of tha caracter reads in the line
+ * custom_getline - Reads a line from a file stream into
+ * a buffer
+ * @lineptr: pointer to a pointer that holds the address of the
+ * buffer allocated
+ * @n: pointer to a variable that holds the size of the buffer
+ * @stream: the file stream to read the line from
+ * Return: return the line length on success, -1 if it failed
  */
-ssize_t _getline(char **lineptr, FILE *stream)
+ssize_t custom_getline(char **lineptr, size_t *n, FILE *stream)
 {
-	char *buffer = NULL;
-	size_t buffer_size = 0;
-	size_t line_length = 0;
-	ssize_t c;
+	static char buffer[BUFFER_SIZE];
+	static size_t buffer_pos;
+	static size_t buffer_size;
 
-	*lineptr = NULL;
+	size_t i;
+	size_t line_length;
 
-	while ((c = getc(stream)) != EOF)
+	if (buffer_pos >= buffer_size)
 	{
-		if (c == '\n')
-		{
-			break;
-		}
-	if (buffer_size == 0)
-	{
-		buffer_size = BUFFER_SIZE;
-		buffer = malloc(buffer_size * sizeof(char));
-		if (buffer == NULL)
+		buffer_size = fread(buffer, 1, BUFFER_SIZE,
+				stream);
+		buffer_pos = 0;
+		if (buffer_size == 0)
 		{
 			return (-1);
 		}
 	}
-	buffer[line_length++] = c;
+	i = buffer_pos;
 
-	if (line_length == buffer_size)
+	while (i < buffer_size && buffer[i] != '\n')
 	{
-		buffer_size *= 2;
-		buffer = realloc(buffer, buffer_size * sizeof(char));
-		free(buffer);
-		return (-1);
+		i++;
 	}
-	}
-	if (line_length == 0)
+	line_length = i - buffer_pos;
+	if (*n < line_length + 1)
 	{
-		return (-1);
+		*n = line_length + 1;
+		*lineptr = (char *)malloc(*n);
 	}
-	*lineptr = buffer;
+
+	memcpy(*lineptr, buffer + buffer_pos, line_length);
 	(*lineptr)[line_length] = '\0';
 
+	buffer_pos = i + 1;
 	return (line_length);
 }

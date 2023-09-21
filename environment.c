@@ -1,49 +1,69 @@
-#include "shell.h"
-
+#include "main.h"
 /**
- * set_environment_variable - set environment variable to a specefied value
- * @variable: the name of the environment variable
- * @value: the set value of the environment variable
- * Return: 0 on success, -1 otherwise
+ * my_setenv - sets an environment variable
+ * @shell_name: the name of the shell
+ * @av: array of strings containing command line
+ * arguments
+ * Return: no return
  */
-int set_environment_variable(const char *variable, const char *value)
+void my_setenv(char *shell_name, char **av)
 {
-	if (setenv(variable, value, 1) != 0)
+	char *varname;
+	char *value;
+	char *old_value;
+
+	if (av[1] == NULL || av[2] == NULL)
 	{
-		fprintf(stderr, "Error: Unable to set environment variable.\n");
-		return (1);
+		fprintf(stderr, "%s: Missing variable name or value.\n",
+				shell_name);
+		return;
 	}
-	return (0);
-}
+	varname = av[1];
+	value = av[2];
+	old_value = getenv(varname);
 
-/**
- * unset_environment_variable - remove an environment variable
- * @variable: the name of the environment variable
- *
- * Return: 0 on success, -1 otherwise
- */
-int unset_environment_variable(const char *variable)
-{
-	if (unsetenv(variable) != 0)
+	if (setenv(varname, value, old_value ? 1 : 0) != 0)
 	{
-		fprintf(stderr, "Error: Unable to set environment variable.\n");
-		return (1);
+		fprintf(stderr, "%s: Failed to set environment variable.\n",
+				shell_name);
 	}
-	return (0);
 }
-
 /**
- * print_environment_variables - print environment variable
- *
- * Return: void
+ * my_unsetenv - unset an environment variable
+ * @shell_name: the name of the shell
+ * @av: array of strings containing command line arguments
+ * Return: no return
  */
-void print_environment_variables(void)
+void my_unsetenv(char *shell_name, char **av)
 {
-	/*extern char **environ;*/
-	char **env;
+	int length;
+	int i;
+	int j;
 
-	for (env = environ; *env != NULL; env++)
+	if (!av[1])
 	{
-		printf("%s\n", *env);
+		fprintf(stderr, "%s: Variable name not given.\n",
+				shell_name);
+		return;
+	}
+	if (getenv(av[1]) == NULL)
+	{
+		fprintf(stderr, "%s: Variable not found.\n",
+				shell_name);
+		return;
+	}
+	length = strlen(av[1]);
+
+	for (i = 0; environ[i]; i++)
+	{
+		if (strncmp(environ[i], av[1], length) == 0
+				&& environ[i][length] == '=')
+		{
+			for (j = i; environ[j]; j++)
+			{
+				environ[j] = environ[j + 1];
+			}
+			break;
+		}
 	}
 }

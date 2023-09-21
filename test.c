@@ -1,61 +1,61 @@
-#include "shell.h"
-
+#include "main.h"
 /**
- * get_user_input - Reads a line of user input from a specefied stream
- * @command: a character array to strore the user input
- * @max_length: The max length of the input to read
- * @input_stream: the input stream to read from
- * Return: 0 if an error occur during input reading
+ * is_exit_command - checks if a given command
+ * is the "exit" command.
+ * @command: The command to check
+ * Return: Returns 1 if the command is "exit"
+ * 0 if not
  */
-int get_user_input(char command[], size_t max_length, FILE *input_stream)
+int is_exit_command(const char *command)
 {
-	size_t line_length;
-
-	line_length = getline(&command, &max_length, input_stream);
-
-	if (line_length == (size_t)-1)
+	return ((strcmp(command, "exit") == 0));
+}
+/**
+ * process_command - process a command, executing
+ * apppropriate action based on the command.
+ * @command: The command to process
+ * @interactive: Flag indication if shell is in the interactive mode
+ * Return: no return.
+ */
+void process_command(const char *command, int interactive)
+{
+	if (is_exit_command(command))
 	{
-		if (feof(input_stream))
+		if (interactive)
 		{
-			return (0);
+			printf("./hsh: No such file or directory\n");
 		}
 		else
 		{
-			perror("getline");
-			exit(1);
+			char *av[] = {"exit", NULL};
+
+			exit_status(0, av);
 		}
 	}
-	if (command[line_length - 1] == '\n')
+	else if (command[0] == '/')
 	{
-		command[line_length - 1] = '\0';
+		execute_command(command);
 	}
-	return (1);
+	else
+	{
+		if (interactive)
+		{
+			printf("./hsh: no such file or directory\n");
+		}
+	}
 }
 /**
- * is_valid_command - check if a given command is a valid executable
- * @command: The command to check
- *
- * Return: 1 if the command s valide executable, 0 Otherwise
+ *  execute_command - Executes a command by creating
+ *  new process and using execlp to execute
+ *  @command: the command to execute.
+ *  Return: no return
  */
-int is_valid_command(char command[])
-{
-	return (access(command, X_OK) == 0);
-}
-/**
- * fork_and_execute_command - forks a childs process and execute comand
- * @command: The command to be executed
- * @last_exit_status: pointer to store the exit status
- * Return: void
- */
-void fork_and_execute_command(char command[], int *last_exit_status)
-{
-	int status;
-	char *args[MAX_ARGS];
-	int num_args = tokenize_command(command, args);
 
-	pid_t child_pid;
-
-	child_pid = fork();
+void execute_command(const char *command)
+{
+	pid_t child_pid = fork();
+	char *path;
+	char *dir;
 
 	if (child_pid == -1)
 	{
@@ -64,46 +64,30 @@ void fork_and_execute_command(char command[], int *last_exit_status)
 	}
 	else if (child_pid == 0)
 	{
-		if (num_args >= 0)
+		path = getenv("PATH");
+		dir = strtok(path, ":");
+		while (dir != NULL)
 		{
-			if (execvp(args[0], args) == -1)
+			char executable_path[MAX_CMD_LENGTH];
+
+			snprintf(executable_path, sizeof(executable_path), "%s%s", dir, command);
+			if (access(executable_path, X_OK) == 0)
 			{
-				perror("execvp");
-				exit(1);
+				if (execlp(executable_path, command, NULL) == -1)
+				{
+					perror("execl");
+					exit(1);
+				}
 			}
+			dir = strtok(NULL, ":");
 		}
-			else
-			{
-				fprintf(stderr, "./hsh: Invalid command\n");
-				exit(1);
-			}
+	fprintf(stderr, "command not found: %s\n", command);
+	exit(127);
 	}
-			else
-			{
-				wait(&status);
-			if (WIFEXITED(status))
-			{
-				*last_exit_status = WEXITSTATUS(status);
-			}
-		}
-}
-
-
-
-/**
- * parse_arguments - parses a string into an array of arguments
- * @input: The input string to be parced
- * @args: an array to store the parced arguments
- * Return: void
- */
-void parse_arguments(char input[], char *args[])
-{
-	int arg_count = 0;
-
-	args[0] = strtok(input, " ");
-	while (args[arg_count] != NULL)
+	else
 	{
-		arg_count++;
-		args[arg_count] = strtok(NULL, " ");
+		int status;
+
+		wait(&status);
 	}
 }

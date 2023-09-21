@@ -1,13 +1,5 @@
 #include "shell.h"
-/**
- * custom_getline - Reads a line from a file stream into
- * a buffer
- * @lineptr: pointer to a pointer that holds the address of the
- * buffer allocated
- * @n: pointer to a variable that holds the size of the buffer
- * @stream: the file stream to read the line from
- * Return: return the line length on success, -1 if it failed
- */
+
 ssize_t custom_getline(char **lineptr, size_t *n, FILE *stream)
 {
 	static char buffer[BUFFER_SIZE];
@@ -59,7 +51,7 @@ void get_user_input(char *user_input, size_t max_length)
 {
 	size_t line_length;
 
-	line_length = getline(&user_input, &max_length, stdin);
+	line_length = custom_getline(&user_input, &max_length, stdin);
 	if (line_length == (size_t) -1)
 	{
 		exit(0);
@@ -70,3 +62,4 @@ void get_user_input(char *user_input, size_t max_length)
 		user_input[line_length - 1] = '\0';
 	}
 }
+

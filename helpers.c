@@ -1,18 +1,17 @@
 #include "shell.h"
-/**
- * process_command - process a command, executing
- * apppropriate action based on the command.
- * @command: The command to process
- * @interactive: Flag indication if shell is in the interactive mode
- * Return: no return.
- */
+
+int is_exit_command(const char *command)
+{
+	return (strcmp(command, "exit") == 0);
+}
+
 void process_command(const char *command, int interactive)
 {
 	if (is_exit_command(command))
 	{
 		if (interactive)
 		{
-			printf("./shell: No such file or directory\n");
+			printf("./hsh: No such file or directory\n");
 		}
 		else
 		{
@@ -29,23 +28,17 @@ void process_command(const char *command, int interactive)
 	{
 		if (interactive)
 		{
-			printf("./shell: no such file or directory\n");
+			printf("./hsh: no such file or directory\n");
 		}
 	}
 }
-/**
- *  execute_command - Executes a command by creating
- *  new process and using execlp to execute
- *  @command: the command to execute.
- *  Return: no return
- */
-
 void execute_command(const char *command)
 {
-	pid_t child_pid = fork();
+	pid_t child_pid;
 	char *path;
 	char *dir;
 
+	child_pid = fork();
 	if (child_pid == -1)
 	{
 		perror("fork");
@@ -80,12 +73,6 @@ void execute_command(const char *command)
 		wait(&status);
 	}
 }
-/**
- * exec_cmd - executes a command using the exexvp syscall
- * @c: a pointer to a data structure that contains the command
- * and its arguments' information
- * Return: no return
- */
 void exec_cmd(struct data *c)
 {
 	char *cmd;
@@ -103,3 +90,4 @@ void exec_cmd(struct data *c)
 	perror("execvp");
 	exit(1);
 }
+

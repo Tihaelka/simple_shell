@@ -11,10 +11,13 @@
 #include <errno.h>
 #include <limits.h>
 #include <stddef.h>
+#include <stdbool.h> 
 
-#define MAX_CMD_LENGTH 100
+/*#define MAX_CMD_LENGTH 100*/
+#define MAX_CMD_LENGTH 1024
 #define MAX_TOKENS  10
 #define BUFFER_SIZE 1024
+
 
 extern char **environ;
 
@@ -27,8 +30,9 @@ extern char **environ;
 struct data
 {
 	char *av[MAX_TOKENS];
-	int last_exit;
+	/*int last_exit;*/
 };
+
 /*user.c*/
 void get_user_input(char *user_input, size_t max_length);
 ssize_t custom_getline(char **lineptr, size_t *n, FILE *stream);
@@ -46,10 +50,12 @@ int main(void);
 /*helpers.c*/
 void process_command(const char *command, int interactive);
 void execute_command(const char *command);
+void exec_cmd(struct data *c);
 
 /*environment.c*/
 void my_setenv(char *shell_name, char **av);
 void my_unsetenv(char *shell_name, char **av);
 void execute_env_builtin(void);
+
 
 #endif

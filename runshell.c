@@ -117,8 +117,7 @@ int main(void)
 		}
 		if (do_print && interactive && last_sts != 0)
 		{
-			printf("last command failed with status%d\n",
-					last_sts);
+			printf("%d\n",last_sts);
 		}
 		if (strcmp(usr_int, "exit") == 0)
 		{

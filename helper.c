@@ -12,7 +12,7 @@ void process_command(const char *command, int interactive)
 	{
 		if (interactive)
 		{
-			printf("./hsh: No such file or directory\n");
+			printf("./shell: No such file or directory\n");
 		}
 		else
 		{
@@ -29,7 +29,7 @@ void process_command(const char *command, int interactive)
 	{
 		if (interactive)
 		{
-			printf("./hsh: no such file or directory\n");
+			printf("./shell: no such file or directory\n");
 		}
 	}
 }

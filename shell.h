@@ -13,8 +13,7 @@
 #include <stddef.h>
 #include <stdbool.h> 
 
-/*#define MAX_CMD_LENGTH 100*/
-#define MAX_CMD_LENGTH 1024
+#define MAX_CMD_LENGTH 100
 #define MAX_TOKENS  10
 #define BUFFER_SIZE 1024
 
@@ -30,7 +29,7 @@ extern char **environ;
 struct data
 {
 	char *av[MAX_TOKENS];
-	/*int last_exit;*/
+	int last_exit;
 };
 
 /*user.c*/

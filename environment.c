@@ -1,5 +1,4 @@
 #include "shell.h"
-
 /**
  * my_setenv - sets an environment variable
  * @shell_name: the name of the shell
@@ -11,6 +10,7 @@ void my_setenv(char *shell_name, char **av)
 {
 	char *varname;
 	char *value;
+	char *old_value;
 
 	if (av[1] == NULL || av[2] == NULL)
 	{
@@ -20,14 +20,14 @@ void my_setenv(char *shell_name, char **av)
 	}
 	varname = av[1];
 	value = av[2];
+	old_value = getenv(varname);
 
-	if (setenv(varname, value, 1) != 0)
+	if (setenv(varname, value, old_value ? 1 : 0) != 0)
 	{
 		fprintf(stderr, "%s: Failed to set environment variable.\n",
 				shell_name);
 	}
 }
-
 /**
  * my_unsetenv - unset an environment variable
  * @shell_name: the name of the shell
@@ -83,4 +83,3 @@ void execute_env_builtin(void)
 		env_ptr++;
 	}
 }
-

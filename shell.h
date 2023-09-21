@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef SHELL_H
+#define SHELL_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,36 +29,27 @@ struct data
 	char *av[MAX_TOKENS];
 	int last_exit;
 };
-
+/*user.c*/
 void get_user_input(char *user_input, size_t max_length);
+ssize_t custom_getline(char **lineptr, size_t *n, FILE *stream);
+/*split.c*/
 void _split(char *cmd_buffer, char delimiter, char **av, int max_tokens);
+/*command.c*/
 void exec_cmd(struct data *c);
+/*exit.c*/
 void exit_status(int exit_code, char *av[]);
+int is_exit_command(const char *command);
 
-
-
+/*runshell.c*/
 int main(void);
 
-int is_exit_command(const char *command);
+/*helpers.c*/
 void process_command(const char *command, int interactive);
 void execute_command(const char *command);
 
-int wait(int *status);
-
-void execute_env_builtin(void);
-ssize_t custom_getline(char **lineptr, size_t *n, FILE *stream);
-
-char prevDir[1024];
-
-int change_directory(const char *dir, char *pdir);
-
+/*environment.c*/
 void my_setenv(char *shell_name, char **av);
 void my_unsetenv(char *shell_name, char **av);
-
-void *the_realloc(void *c, unsigned int o_size, unsigned int n_size);
-char *the_memset(char *s, char c, unsigned int n);
-
-int is_interactive(void);
-void execute_command_with_operators(const char *command);
+void execute_env_builtin(void);
 
 #endif

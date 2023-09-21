@@ -1,15 +1,4 @@
-#include "main.h"
-/**
- * is_exit_command - checks if a given command
- * is the "exit" command.
- * @command: The command to check
- * Return: Returns 1 if the command is "exit"
- * 0 if not
- */
-int is_exit_command(const char *command)
-{
-	return ((strcmp(command, "exit") == 0));
-}
+#include "shell.h"
 /**
  * process_command - process a command, executing
  * apppropriate action based on the command.
@@ -90,4 +79,27 @@ void execute_command(const char *command)
 
 		wait(&status);
 	}
+}
+/**
+ * exec_cmd - executes a command using the exexvp syscall
+ * @c: a pointer to a data structure that contains the command
+ * and its arguments' information
+ * Return: no return
+ */
+void exec_cmd(struct data *c)
+{
+	char *cmd;
+	char *args[MAX_TOKENS];
+	int i;
+
+	cmd = c->av[0];
+	args[0] = cmd;
+
+	for (i = 1; i < MAX_TOKENS; i++)
+	{
+		args[i] = c->av[i];
+	}
+	execvp(cmd, args);
+	perror("execvp");
+	exit(1);
 }

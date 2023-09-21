@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 /**
  * _split - It takes a command buffer as a input
  * and split it into tokens, storing them in array

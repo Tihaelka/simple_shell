@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 /**
  * my_setenv - sets an environment variable
  * @shell_name: the name of the shell
@@ -65,5 +65,21 @@ void my_unsetenv(char *shell_name, char **av)
 			}
 			break;
 		}
+	}
+}
+
+/**
+ * execute_env_builtin - prints the environment variables to
+ * standard output
+ * Return: no return
+ */
+void execute_env_builtin(void)
+{
+	char **env_ptr = environ;
+
+	while (*env_ptr != NULL)
+	{
+		printf("%s\n", *env_ptr);
+		env_ptr++;
 	}
 }

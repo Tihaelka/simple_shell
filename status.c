@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 /**
  * exit_status - handles the exit status of the shell
  * @exit_code: the code to be used when exiting the shell
@@ -30,4 +30,16 @@ void exit_status(int exit_code, char *av[])
 			printf("$ \n");
 			exit(0);
 		}
+}
+
+/**
+ * is_exit_command - checks if a given command
+ * is the "exit" command.
+ * @command: The command to check
+ * Return: Returns 1 if the command is "exit"
+ * 0 if not
+ */
+int is_exit_command(const char *command)
+{
+	return ((strcmp(command, "exit") == 0));
 }

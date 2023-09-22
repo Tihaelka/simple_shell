@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <stddef.h>
-#include <stdbool.h> 
+#include <stdbool.h>
 
 #define MAX_CMD_LENGTH 100
 #define MAX_TOKENS  10

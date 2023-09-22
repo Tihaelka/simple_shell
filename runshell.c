@@ -96,6 +96,7 @@ int main(void)
 				else if (child_pid == 0)
 				{
 					char *args[4];
+
 					args[0] = "sh";
 					args[1] = "-c";
 					args[2] = cmd;
@@ -108,6 +109,7 @@ int main(void)
 				else
 				{
 					int status;
+
 					waitpid(child_pid, &status, 0);
 					last_sts = WEXITSTATUS(status);
 					do_print = 1;
@@ -117,7 +119,7 @@ int main(void)
 		}
 		if (do_print && interactive && last_sts != 0)
 		{
-			printf("%d\n",last_sts);
+			printf("%d\n", last_sts);
 		}
 		if (strcmp(usr_int, "exit") == 0)
 		{
